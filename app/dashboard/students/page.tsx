@@ -20,6 +20,13 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Inside your StudentsPage component's return statement, perhaps near the header
+{user && (
+  <div className="text-sm text-muted-foreground">
+    Logged in as: {user.displayName || user.email} (Role: {user.role})
+  </div>
+)}
+
   useEffect(() => {
     const fetchStudents = async () => {
       if (!user?.schoolId) return
