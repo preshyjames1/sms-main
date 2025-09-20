@@ -9,7 +9,7 @@ import {
   signOut as firebaseSignOut,
   updateProfile,
 } from "firebase/auth"
-import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore"
+import { doc, getDoc, setDoc, serverTimestamp, onSnapshot, updateDoc } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
 import type { User, School } from "@/lib/types"
 import { useRouter } from "next/navigation"
@@ -59,12 +59,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               });
               return () => unsubscribeSchool(); // Cleanup school listener
             } else {
-                 setLoading(false);
+                setLoading(false);
             }
           } else {
-            setUser(null);
-            setSchoolData(null);
-            setLoading(false);
+            // **THE FIX IS HERE**
+            // The document doesn't exist YET. This is expected for a new user.
+            // We do NOT set user to null. We just wait.
+            // We keep loading until the document is created and the snapshot fires again.
+            console.log("Waiting for user document creation...");
+            setLoading(true);
           }
         });
         return () => unsubscribeUser(); // Cleanup user listener
